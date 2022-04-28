@@ -73,7 +73,7 @@ class WGAN():
 						self.G_loss,
 						feed_dict={self.z: sample_z(batch_size, self.z_dim)})
 				print('Iter: {}; D loss: {:.4}; G_loss: {:.4}'.format(epoch, D_loss_curr, G_loss_curr))
-				#迭代1000次保存一张图片
+				#迭代1000次保存一张图片 
 				if epoch % 1000 == 0:
 					samples = self.sess.run(self.G_sample, feed_dict={self.z: sample_z(16, self.z_dim)})
 
