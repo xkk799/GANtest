@@ -122,7 +122,7 @@ class mnist():
 		self.is_tanh = is_tanh
 
 	def __call__(self,batch_size):
-		batch_imgs,y = self.data.train.next_batch(batch_size)
+		batch_imgs,y = self.data.train.next_batch(batch_size)#一次返回batch_size个标签和数据
 		if self.flag == 'conv':
 			batch_imgs = np.reshape(batch_imgs, (batch_size, self.size, self.size, self.channel)) 
 		if self.is_tanh:
@@ -147,4 +147,4 @@ class mnist():
 
 if __name__ == '__main__':
 	data = face3D()
-	print data(17).shape
+	print(data(17).shape)

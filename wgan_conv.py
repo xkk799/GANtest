@@ -21,8 +21,8 @@ class WGAN():
 		self.data = data
 
 		self.z_dim = self.data.z_dim
-		self.size = self.data.size
-		self.channel = self.data.channel
+		self.size = self.data.size#图片的尺寸
+		self.channel = self.data.channel#通道数
 
 		self.X = tf.placeholder(tf.float32, shape=[None, self.size, self.size, self.channel])
 		self.z = tf.placeholder(tf.float32, shape=[None, self.z_dim])
@@ -35,11 +35,11 @@ class WGAN():
 		# loss
 		self.D_loss = - tf.reduce_mean(self.D_real) + tf.reduce_mean(self.D_fake)
 		self.G_loss = - tf.reduce_mean(self.D_fake)
-
+		#优化器
 		self.D_solver = tf.train.RMSPropOptimizer(learning_rate=1e-4).minimize(self.D_loss, var_list=self.discriminator.vars)
 		self.G_solver = tf.train.RMSPropOptimizer(learning_rate=1e-4).minimize(self.G_loss, var_list=self.generator.vars)
 		
-		# clip
+		# clip 训练参数限制大小
 		self.clip_D = [var.assign(tf.clip_by_value(var, -0.01, 0.01)) for var in self.discriminator.vars]
 		
 		gpu_options = tf.GPUOptions(allow_growth=True)
@@ -48,10 +48,9 @@ class WGAN():
 	def train(self, sample_folder, training_epoches = 1000000, batch_size = 64):
 		i = 0
 		self.sess.run(tf.global_variables_initializer())
-		
-		for epoch in range(training_epoches):
+		for epoch in range(training_epoches):#训练次数更新权重
 			# update D
-			n_d = 100 if epoch < 25 or (epoch+1) % 500 == 0 else 5
+			n_d = 100 if epoch < 25 or (epoch+1) % 500 == 0 else 5 
 			for _ in range(n_d):
 				X_b, _ = self.data(batch_size)
 				self.sess.run(self.clip_D)
@@ -74,7 +73,7 @@ class WGAN():
 						self.G_loss,
 						feed_dict={self.z: sample_z(batch_size, self.z_dim)})
 				print('Iter: {}; D loss: {:.4}; G_loss: {:.4}'.format(epoch, D_loss_curr, G_loss_curr))
-
+				#迭代1000次保存一张图片
 				if epoch % 1000 == 0:
 					samples = self.sess.run(self.G_sample, feed_dict={self.z: sample_z(16, self.z_dim)})
 

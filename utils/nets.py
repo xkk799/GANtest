@@ -225,9 +225,11 @@ class G_conv_mnist(object):
 		with tf.variable_scope(self.name) as scope:
 			#g = tcl.fully_connected(z, 1024, activation_fn = tf.nn.relu, normalizer_fn=tcl.batch_norm,
 			#						weights_initializer=tf.random_normal_initializer(0, 0.02))
+			#全连接层将z白噪声输出为7*7*128的形状
 			g = tcl.fully_connected(z, 7*7*128, activation_fn = tf.nn.relu, normalizer_fn=tcl.batch_norm,
 									weights_initializer=tf.random_normal_initializer(0, 0.02))
 			g = tf.reshape(g, (-1, 7, 7, 128))  # 7x7
+			#反卷积/上采样的过程，输出为64，卷积核为4，步长2
 			g = tcl.conv2d_transpose(g, 64, 4, stride=2, # 14x14x64
 									activation_fn=tf.nn.relu, normalizer_fn=tcl.batch_norm, padding='SAME', weights_initializer=tf.random_normal_initializer(0, 0.02))
 			g = tcl.conv2d_transpose(g, 1, 4, stride=2, # 28x28x1
@@ -246,12 +248,14 @@ class D_conv_mnist(object):
 			if reuse:
 				scope.reuse_variables()
 			size = 64
+			#卷积层卷积核4*4 步长为2，输出通道数64
 			shared = tcl.conv2d(x, num_outputs=size, kernel_size=4, # bzx28x28x1 -> bzx14x14x64
 						stride=2, activation_fn=lrelu)
 			shared = tcl.conv2d(shared, num_outputs=size * 2, kernel_size=4, # 7x7x128
 						stride=2, activation_fn=lrelu, normalizer_fn=tcl.batch_norm)
+			#展开了
 			shared = tcl.flatten(shared)
-			
+			#三个全连接层
 			d = tcl.fully_connected(shared, 1, activation_fn=None, weights_initializer=tf.random_normal_initializer(0, 0.02))
 			q = tcl.fully_connected(shared, 128, activation_fn=lrelu, normalizer_fn=tcl.batch_norm)
 			q = tcl.fully_connected(q, 10, activation_fn=None) # 10 classes
