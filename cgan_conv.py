@@ -46,13 +46,13 @@ class CGAN():
 		self.z = tf.placeholder(tf.float32, shape=[None, self.z_dim])
 		self.y = tf.placeholder(tf.float32, shape=[None, self.y_dim])
 
-		# nets
+		# nets输入多了个条件
 		self.G_sample = self.generator(concat(self.z, self.y))
 
 		self.D_real, _ = self.discriminator(conv_concat(self.X, self.y))
 		self.D_fake, _ = self.discriminator(conv_concat(self.G_sample, self.y), reuse = True)
 		
-		# loss
+		# loss损失函数不同
 		self.D_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_real, labels=tf.ones_like(self.D_real))) + tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_fake, labels=tf.zeros_like(self.D_fake)))
 		self.G_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_fake, labels=tf.ones_like(self.D_fake)))
 
