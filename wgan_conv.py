@@ -20,7 +20,7 @@ class WGAN():
 		self.discriminator = discriminator
 		self.data = data
 
-		self.z_dim = self.data.z_dim
+		self.z_dim = self.data.z_dim#白噪声维度
 		self.size = self.data.size#图片的尺寸
 		self.channel = self.data.channel#通道数
 

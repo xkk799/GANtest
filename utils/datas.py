@@ -111,13 +111,13 @@ class celebA():
 
 class mnist():
 	def __init__(self, flag='conv', is_tanh = False):
-		datapath = prefix + 'mnist'
+		datapath = prefix + 'mnist'#路径
 		self.X_dim = 784 # for mlp
 		self.z_dim = 100
 		self.y_dim = 10
 		self.size = 28 # for conv
 		self.channel = 1 # for conv
-		self.data = input_data.read_data_sets(datapath, one_hot=True)
+		self.data = input_data.read_data_sets(datapath, one_hot=True)#读取数据
 		self.flag = flag
 		self.is_tanh = is_tanh
 
